@@ -1,14 +1,12 @@
+using Corsinvest.ProxmoxVE.Api.Shared.Models.Node;
 using MediatR;
-using TCP.Core.Models;
-using TCP.Core.Utils;
-using TCP.ProxmoxInteractor;
-using TCP.ProxmoxInteractor.Repositories;
+using TCP.ProxmoxInteractor.Repositories.Interfaces;
 
 namespace TCP.Application.Queries;
 
-public record ListAllLxcMachines() : IRequest<IEnumerable<Lxc>>;
+public record ListAllLxcMachines() : IRequest<IEnumerable<NodeVmLxc>>;
 
-public class ListAllLxcMachinesHandler : IRequestHandler<ListAllLxcMachines, IEnumerable<Lxc>>
+public class ListAllLxcMachinesHandler : IRequestHandler<ListAllLxcMachines, IEnumerable<NodeVmLxc>>
 {
     private readonly INodesRepository _nodesRepository;
     private readonly IVirtualMachineRepository _virtualMachineRepository;
@@ -20,17 +18,15 @@ public class ListAllLxcMachinesHandler : IRequestHandler<ListAllLxcMachines, IEn
         _virtualMachineRepository = virtualMachineRepository;
     }
 
-    public async Task<IEnumerable<Lxc>> Handle(ListAllLxcMachines request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<NodeVmLxc>> Handle(ListAllLxcMachines request, CancellationToken cancellationToken)
     {
-        var allNodesRaw = await _nodesRepository.ListNodes();
-        IEnumerable<Node> nodes = ProxmoxClientResultUnwrapper.Unwrap<IEnumerable<Node>>(allNodesRaw);
+        var nodes = await _nodesRepository.ListNodes();
 
-        IEnumerable<Lxc> allMachines = new List<Lxc>();
+        IEnumerable<NodeVmLxc> allMachines = new List<NodeVmLxc>();
         foreach (var node in nodes)
         {
-            var allLxcsInNode = await _virtualMachineRepository.ListIxcMachines(node.node);
-            IEnumerable<Lxc> unwrappedLxcList = ProxmoxClientResultUnwrapper.Unwrap<IEnumerable<Lxc>>(allLxcsInNode);
-            allMachines = allMachines.Concat(unwrappedLxcList);
+            var allLxcsInNode = await _virtualMachineRepository.ListLxcMachines(node.Node);
+            allMachines = allMachines.Concat(allLxcsInNode);
         }
 
         return allMachines;

@@ -1,7 +1,7 @@
-using Corsinvest.ProxmoxVE.Api;
 using TCP.ProxmoxInteractor.Factories;
+using TCP.ProxmoxInteractor.Repositories.Interfaces;
 
-namespace TCP.ProxmoxInteractor;
+namespace TCP.ProxmoxInteractor.Repositories;
 
 public class ProxmoxRepository: IProxmoxRepository
 {

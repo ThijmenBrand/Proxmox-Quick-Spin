@@ -1,14 +1,15 @@
+using Corsinvest.ProxmoxVE.Api.Shared.Models.Node;
 using MediatR;
-using TCP.Core.Models;
 using TCP.Core.Utils;
 using TCP.ProxmoxInteractor;
 using TCP.ProxmoxInteractor.Repositories;
+using TCP.ProxmoxInteractor.Repositories.Interfaces;
 
 namespace TCP.Application.Queries;
 
-public record ListLxcMachinesInNode(string node) : IRequest<IEnumerable<Lxc>>;
+public record ListLxcMachinesInNode(string node) : IRequest<IEnumerable<NodeVmLxc>>;
 
-public class ListLxcMachinesInNodeHandler : IRequestHandler<ListLxcMachinesInNode, IEnumerable<Lxc>>
+public class ListLxcMachinesInNodeHandler : IRequestHandler<ListLxcMachinesInNode, IEnumerable<NodeVmLxc>>
 {
     private readonly INodesRepository _nodesRepository;
     private readonly IVirtualMachineRepository _virtualMachineRepository;
@@ -20,11 +21,10 @@ public class ListLxcMachinesInNodeHandler : IRequestHandler<ListLxcMachinesInNod
         _virtualMachineRepository = virtualMachineRepository;
     }
 
-    public async Task<IEnumerable<Lxc>> Handle(ListLxcMachinesInNode request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<NodeVmLxc>> Handle(ListLxcMachinesInNode request, CancellationToken cancellationToken)
     {
-        var allLxcInNode = await _virtualMachineRepository.ListIxcMachines(request.node);
-        IEnumerable<Lxc> parsedResult = ProxmoxClientResultUnwrapper.Unwrap<IEnumerable<Lxc>>(allLxcInNode);
+        var allLxcInNode = await _virtualMachineRepository.ListLxcMachines(request.node);
 
-        return parsedResult;
+        return allLxcInNode;
     }
 }

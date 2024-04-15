@@ -1,6 +1,8 @@
 using Carter;
 using TCP.Application;
 using TCP.ProxmoxInteractor;
+using TCP.ProxmoxInteractor.Repositories;
+using TCP.ProxmoxInteractor.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

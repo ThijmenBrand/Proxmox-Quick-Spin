@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using TCP.ProxmoxInteractor.Factories;
 using TCP.ProxmoxInteractor.Repositories;
+using TCP.ProxmoxInteractor.Repositories.Interfaces;
 
 namespace TCP.ProxmoxInteractor;
 

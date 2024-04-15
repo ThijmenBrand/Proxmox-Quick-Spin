@@ -1,4 +1,5 @@
 using Carter;
+using Corsinvest.ProxmoxVE.Api.Shared.Models.Node;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TCP.Application.Queries;
@@ -12,8 +13,8 @@ public class NodesEndpoint(ISender sender) : CarterModule
         app.MapGet("/nodes", ListAllNodes);
     }
 
-    [ProducesResponseType(typeof(IEnumerable<string>), 200)]
-    private async Task<IEnumerable<string>> ListAllNodes()
+    [ProducesResponseType(typeof(IEnumerable<NodeItem>), 200)]
+    private async Task<IEnumerable<NodeItem>> ListAllNodes()
     {
         var result = await sender.Send(new ListProxmoxNodes());
         return result;

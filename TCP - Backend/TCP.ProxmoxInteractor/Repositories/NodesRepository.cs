@@ -1,10 +1,11 @@
-using System.Data;
 using Corsinvest.ProxmoxVE.Api;
-using TCP.ProxmoxInteractor.Factories;
-using TCP.ProxmoxInteractor.Repositories;
+using Corsinvest.ProxmoxVE.Api.Extension;
+using Corsinvest.ProxmoxVE.Api.Shared.Models.Node;
 using Microsoft.Extensions.Configuration;
+using TCP.ProxmoxInteractor.Factories;
+using TCP.ProxmoxInteractor.Repositories.Interfaces;
 
-namespace TCP.ProxmoxInteractor;
+namespace TCP.ProxmoxInteractor.Repositories;
 
 public class NodesRepository : BaseProxmoxRepository, INodesRepository
 {
@@ -15,11 +16,11 @@ public class NodesRepository : BaseProxmoxRepository, INodesRepository
         _configuration = configuration;
     }
     
-    public async Task<dynamic> ListNodes()
+    public async Task<IEnumerable<NodeItem>> ListNodes()
     {
         var client = _proxmoxClientFactory.Create();
-        var nodes = await client.Get("/nodes");
+        var nodes = await client.Nodes.Get();
 
-        return nodes.Response;
+        return nodes;
     }
 }

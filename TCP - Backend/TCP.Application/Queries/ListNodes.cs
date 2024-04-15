@@ -1,15 +1,16 @@
+using Corsinvest.ProxmoxVE.Api.Shared.Models.Node;
 using MediatR;
 using Newtonsoft.Json;
-using TCP.Core.Models;
 using TCP.Core.Utils;
 using TCP.ProxmoxInteractor;
+using TCP.ProxmoxInteractor.Repositories.Interfaces;
 
 namespace TCP.Application.Queries;
 
 
-    public record ListProxmoxNodes() : IRequest<IEnumerable<string>>;
+    public record ListProxmoxNodes() : IRequest<IEnumerable<NodeItem>>;
 
-    public class ListProxmoxNodesHandler : IRequestHandler<ListProxmoxNodes, IEnumerable<string>>
+    public class ListProxmoxNodesHandler : IRequestHandler<ListProxmoxNodes, IEnumerable<NodeItem>>
     {
         private readonly INodesRepository _nodesRepository;
 
@@ -18,13 +19,10 @@ namespace TCP.Application.Queries;
             _nodesRepository = nodesRepository;
         }
     
-        public async Task<IEnumerable<string>> Handle(ListProxmoxNodes request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<NodeItem>> Handle(ListProxmoxNodes request, CancellationToken cancellationToken)
         {
-            var nodesObject = await _nodesRepository.ListNodes();
-            IEnumerable<Node> parsedResult = ProxmoxClientResultUnwrapper.Unwrap<IEnumerable<Node>>(nodesObject);
-
-            IEnumerable<string> nodesList = new List<string>();
-
-            return parsedResult.Aggregate(nodesList, (current, node) => current.Append(node.node));
+            var allNodes = await _nodesRepository.ListNodes();
+            
+            return allNodes;
         }
     }
